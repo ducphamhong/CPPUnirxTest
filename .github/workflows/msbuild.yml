@@ -16,24 +16,17 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+      - name: Build
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: |
+          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
+          cmake --build ./PrjVisualStudio --config "Release"
 
-    - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: |
-        cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
-        cmake --build ./PrjVisualStudio --config "Release"
-
-    - name: Test
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: Bin\Release\CPPPerformance.exe
-      
+      - name: Test
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: Bin\Release\CPPPerformance.exe
